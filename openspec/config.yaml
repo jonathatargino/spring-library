@@ -1,20 +1,33 @@
 schema: spec-driven
 
-# Project context (optional)
-# This is shown to AI when creating artifacts.
-# Add your tech stack, conventions, style guides, domain knowledge, etc.
-# Example:
-#   context: |
-#     Tech stack: TypeScript, React, Node.js
-#     We use conventional commits
-#     Domain: e-commerce platform
+context: |
+  Tech stack: Java 21, Spring Boot 3.3.5, Maven, PostgreSQL 16, Docker Compose, Nginx 1.25
 
-# Per-artifact rules (optional)
-# Add custom rules for specific artifacts.
-# Example:
-#   rules:
-#     proposal:
-#       - Keep proposals under 500 words
-#       - Always include a "Non-goals" section
-#     tasks:
-#       - Break tasks into chunks of max 2 hours
+  Arquitetura de microsserviços com 4 containers:
+  - autor-ms (porta 8082): Spring Boot REST + JPA + PostgreSQL (db_autores), pacote com.library.autorms
+  - livro-ms (porta 8081): Spring Boot REST + JPA + PostgreSQL (db_livros), pacote com.library.livrooms
+  - front-ms (porta 8080): Spring Boot + Thymeleaf, usa RestClient para chamar as APIs, pacote com.library.frontms
+  - nginx (porta 80): API Gateway que roteia para os serviços acima
+
+  Regras de domínio:
+  - livro-ms guarda autorId como Long sem FK; quem resolve o nome do autor é o front-ms
+  - front-ms chama livro-ms em http://livro-ms:8081 e autor-ms em http://autor-ms:8082 (nomes Docker)
+  - Padrão PRG obrigatório nos formulários do front-ms
+  - APIs REST retornam {"erro": "mensagem"} em casos de erro
+  - ddl-auto=update para criação automática das tabelas
+
+  Estrutura de pastas de cada microsserviço REST (autor-ms, livro-ms):
+  controller/, model/, repository/, service/, exception/, dto/ (opcional)
+
+  Estrutura front-ms:
+  controller/, config/ (RestClient beans), model/ (POJOs)
+  templates/autores/{lista,formulario}.html
+  templates/livros/{lista,formulario,detalhe}.html
+  templates/fragments/layout.html
+
+rules:
+  tasks:
+    - Cada task deve focar em um único serviço (autor-ms, livro-ms ou front-ms)
+    - Implementar na ordem: autor-ms → livro-ms → front-ms
+    - Sempre incluir tratamento de erros (@ControllerAdvice nas APIs, try-catch no front-ms)
+    - Nunca usar @CrossOrigin nos microsserviços — CORS é responsabilidade do Nginx

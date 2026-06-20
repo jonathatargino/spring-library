@@ -1,0 +1,80 @@
+version: '3.8'
+
+services:
+  nginx:
+    image: nginx:1.25
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - front-ms
+      - livro-ms
+      - autor-ms
+
+  front-ms:
+    build: ./front-ms
+    expose:
+      - "8080"
+    environment:
+      LIVRO_MS_URL: http://livro-ms:8081
+      AUTOR_MS_URL: http://autor-ms:8082
+    depends_on:
+      - livro-ms
+      - autor-ms
+
+  livro-ms:
+    build: ./livro-ms
+    expose:
+      - "8081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-livros:5432/db_livros
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+    depends_on:
+      postgres-livros:
+        condition: service_healthy
+
+  autor-ms:
+    build: ./autor-ms
+    expose:
+      - "8082"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-autores:5432/db_autores
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+    depends_on:
+      postgres-autores:
+        condition: service_healthy
+
+  postgres-livros:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: db_livros
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres_livros_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d db_livros"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  postgres-autores:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: db_autores
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres_autores_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d db_autores"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_livros_data:
+  postgres_autores_data:
