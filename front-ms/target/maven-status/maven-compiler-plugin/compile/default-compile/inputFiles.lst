@@ -1,0 +1,8 @@
+/home/jonatha-targino/Personal/spring-library/front-ms/src/main/java/com/library/frontms/FrontMsApplication.java
+/home/jonatha-targino/Personal/spring-library/front-ms/src/main/java/com/library/frontms/config/RestClientConfig.java
+/home/jonatha-targino/Personal/spring-library/front-ms/src/main/java/com/library/frontms/controller/AutorController.java
+/home/jonatha-targino/Personal/spring-library/front-ms/src/main/java/com/library/frontms/controller/HomeController.java
+/home/jonatha-targino/Personal/spring-library/front-ms/src/main/java/com/library/frontms/controller/LivroController.java
+/home/jonatha-targino/Personal/spring-library/front-ms/src/main/java/com/library/frontms/exception/GlobalErrorHandler.java
+/home/jonatha-targino/Personal/spring-library/front-ms/src/main/java/com/library/frontms/model/Autor.java
+/home/jonatha-targino/Personal/spring-library/front-ms/src/main/java/com/library/frontms/model/Livro.java

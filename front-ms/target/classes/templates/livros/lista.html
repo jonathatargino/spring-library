@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
+<head th:replace="~{fragments/layout :: head('Livros')}"></head>
+<body>
+
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<main class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="h3">Livros</h1>
+        <a th:href="@{/livros/novo}" class="btn btn-primary">+ Novo Livro</a>
+    </div>
+
+    <div th:if="${mensagem}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <span th:text="${mensagem}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <div th:if="${erro}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <span th:text="${erro}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <!-- Filtro por disponibilidade -->
+    <div class="mb-3 d-flex gap-2 align-items-center">
+        <span class="text-muted small">Filtrar:</span>
+        <a th:href="@{/livros}" class="btn btn-sm"
+           th:classappend="${disponivel == null} ? 'btn-dark' : 'btn-outline-secondary'">Todos</a>
+        <a th:href="@{/livros(disponivel=true)}" class="btn btn-sm"
+           th:classappend="${disponivel == true} ? 'btn-success' : 'btn-outline-success'">Disponíveis</a>
+        <a th:href="@{/livros(disponivel=false)}" class="btn btn-sm"
+           th:classappend="${disponivel == false} ? 'btn-secondary' : 'btn-outline-secondary'">Indisponíveis</a>
+    </div>
+
+    <div th:if="${livros.empty}" class="text-muted">Nenhum livro encontrado.</div>
+
+    <table th:unless="${livros.empty}" class="table table-striped table-hover align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th>#</th>
+                <th>Título</th>
+                <th>Gênero</th>
+                <th>Ano</th>
+                <th>Disponível</th>
+                <th>Autor</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="livro : ${livros}">
+                <td th:text="${livro.id}"></td>
+                <td>
+                    <a th:href="@{/livros/{id}(id=${livro.id})}" th:text="${livro.titulo}"
+                       class="text-decoration-none fw-semibold"></a>
+                </td>
+                <td th:text="${livro.genero}"></td>
+                <td th:text="${livro.anoPublicacao}"></td>
+                <td>
+                    <span th:if="${livro.disponivel}" class="badge bg-success">Sim</span>
+                    <span th:unless="${livro.disponivel}" class="badge bg-secondary">Não</span>
+                </td>
+                <td th:text="${livro.nomeAutor}"></td>
+                <td>
+                    <a th:href="@{/livros/{id}(id=${livro.id})}"
+                       class="btn btn-sm btn-outline-info me-1">Detalhe</a>
+                    <a th:href="@{/livros/{id}/editar(id=${livro.id})}"
+                       class="btn btn-sm btn-outline-secondary me-1">Editar</a>
+                    <form th:action="@{/livros/{id}/excluir(id=${livro.id})}"
+                          method="post" class="d-inline">
+                        <button type="submit" class="btn btn-sm btn-outline-danger"
+                                th:onclick="|return confirm('Confirmar exclusão do livro: ${livro.titulo}?')|">
+                            Excluir
+                        </button>
+                    </form>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<script th:replace="~{fragments/layout :: scripts}"></script>
+</body>
+</html>

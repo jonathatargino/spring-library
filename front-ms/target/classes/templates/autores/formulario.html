@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
+<head th:replace="~{fragments/layout :: head('Autor')}"></head>
+<body>
+
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<main class="container mt-4" style="max-width: 600px;">
+    <div class="d-flex align-items-center gap-2 mb-3">
+        <a th:href="@{/autores}" class="btn btn-sm btn-outline-secondary">&larr; Voltar</a>
+        <h1 class="h3 mb-0">
+            <span th:if="${autor.id == null}">Novo Autor</span>
+            <span th:unless="${autor.id == null}">Editar Autor</span>
+        </h1>
+    </div>
+
+    <div th:if="${erro}" class="alert alert-danger" th:text="${erro}"></div>
+
+    <form th:action="${autor.id == null} ? @{/autores} : @{/autores/{id}(id=${autor.id})}"
+          th:object="${autor}" method="post" novalidate>
+
+        <div class="mb-3">
+            <label for="nome" class="form-label">Nome <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" id="nome" th:field="*{nome}"
+                   th:classappend="${#fields.hasErrors('nome')} ? 'is-invalid'" />
+            <div class="invalid-feedback" th:errors="*{nome}"></div>
+        </div>
+
+        <div class="mb-3">
+            <label for="nacionalidade" class="form-label">Nacionalidade <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" id="nacionalidade" th:field="*{nacionalidade}"
+                   th:classappend="${#fields.hasErrors('nacionalidade')} ? 'is-invalid'" />
+            <div class="invalid-feedback" th:errors="*{nacionalidade}"></div>
+        </div>
+
+        <div class="mb-3">
+            <label for="anoNascimento" class="form-label">Ano de Nascimento <span class="text-danger">*</span></label>
+            <input type="number" class="form-control" id="anoNascimento" th:field="*{anoNascimento}"
+                   th:classappend="${#fields.hasErrors('anoNascimento')} ? 'is-invalid'" />
+            <div class="invalid-feedback" th:errors="*{anoNascimento}"></div>
+        </div>
+
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary">
+                <span th:if="${autor.id == null}">Salvar</span>
+                <span th:unless="${autor.id == null}">Atualizar</span>
+            </button>
+            <a th:href="@{/autores}" class="btn btn-outline-secondary">Cancelar</a>
+        </div>
+    </form>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<script th:replace="~{fragments/layout :: scripts}"></script>
+</body>
+</html>
