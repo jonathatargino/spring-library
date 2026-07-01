@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="pt-BR">
 <head th:replace="~{fragments/layout :: head('Detalhe do Livro')}"></head>
 <body>
 
@@ -34,15 +35,18 @@
             </dl>
         </div>
         <div class="card-footer d-flex gap-2">
-            <a th:href="@{/livros/{id}/editar(id=${livro.id})}" class="btn btn-outline-secondary">
-                Editar
-            </a>
-            <form th:action="@{/livros/{id}/excluir(id=${livro.id})}" method="post" class="d-inline">
-                <button type="submit" class="btn btn-outline-danger"
-                        th:onclick="|return confirm('Confirmar exclusão do livro: ${livro.titulo}?')|">
-                    Excluir
-                </button>
-            </form>
+            <span class="d-flex gap-2" sec:authorize="hasRole('BIBLIOTECARIO')">
+                <a th:href="@{/livros/{id}/editar(id=${livro.id})}" class="btn btn-outline-secondary">
+                    Editar
+                </a>
+                <form th:action="@{/livros/{id}/excluir(id=${livro.id})}" method="post" class="d-inline">
+                    <button type="submit" class="btn btn-outline-danger"
+                            th:data-titulo="${livro.titulo}"
+                            onclick="return confirm('Confirmar exclusão do livro: ' + this.dataset.titulo + '?')">
+                        Excluir
+                    </button>
+                </form>
+            </span>
             <a th:href="@{/livros}" class="btn btn-outline-secondary ms-auto">Voltar para a lista</a>
         </div>
     </div>

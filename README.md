@@ -45,6 +45,30 @@ docker compose down -v
 
 > **Atenção:** `docker compose down -v` apaga os dados persistidos nos volumes do PostgreSQL.
 
+## Autenticação
+
+O sistema exige login. Os usuários abaixo já vêm pré-cadastrados no `front-ms` (configuráveis via `.env`, ver `.env.example`):
+
+| Usuário        | Senha          | Papel          | Pode fazer                         |
+|----------------|----------------|----------------|-------------------------------------|
+| `bibliotecario`| `biblioteca123`| BIBLIOTECARIO  | Ler e escrever (criar/editar/excluir) |
+| `usuario`      | `usuario123`   | USUARIO        | Apenas ler                          |
+
+Acesse `http://localhost/login` para entrar. Ao logar, o `front-ms` emite um JWT e o mantém na sessão, repassando-o automaticamente às chamadas para `autor-ms`/`livro-ms`.
+
+### Usando as APIs diretamente (curl/Postman)
+
+`autor-ms` e `livro-ms` também exigem o JWT no header `Authorization`. Para obter um token sem passar pela tela de login, faça o próprio login via curl e copie o token retornado pelo `front-ms` durante a autenticação, ou — mais simples para testes manuais — gere um token de teste chamando o endpoint de login com as credenciais acima e inspecionando o atributo de sessão no DevTools do navegador (`Application > Cookies`), já que o token fica armazenado na sessão HTTP e não é exposto em um endpoint JSON dedicado nesta versão.
+
+Com o token em mãos:
+```bash
+curl -H "Authorization: Bearer <token>" http://localhost/api/autores
+curl -X POST -H "Authorization: Bearer <token>" -H "Content-Type: application/json" \
+  -d '{"nome":"Machado de Assis","nacionalidade":"Brasileira","anoNascimento":1839}' \
+  http://localhost/api/autores
+```
+Sem o header `Authorization`, qualquer chamada a `/api/**` retorna `401 {"erro": "..."}`. Com papel `USUARIO`, chamadas de escrita (`POST`/`PUT`/`DELETE`) retornam `403 {"erro": "Acesso restrito a bibliotecários"}`.
+
 ## Endpoints das APIs
 
 ### autor-ms (`/api/autores`)

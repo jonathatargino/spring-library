@@ -2,6 +2,8 @@ package com.library.frontms.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.library.frontms.model.Autor;
+import com.library.frontms.security.DownstreamErrorHandler;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.ParameterizedTypeReference;
@@ -15,6 +17,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/autores")
@@ -22,18 +25,26 @@ public class AutorController {
 
     private final RestClient autorClient;
     private final ObjectMapper objectMapper;
+    private final DownstreamErrorHandler downstreamErrorHandler;
 
-    public AutorController(@Qualifier("autorClient") RestClient autorClient, ObjectMapper objectMapper) {
+    public AutorController(@Qualifier("autorClient") RestClient autorClient, ObjectMapper objectMapper,
+                            DownstreamErrorHandler downstreamErrorHandler) {
         this.autorClient = autorClient;
         this.objectMapper = objectMapper;
+        this.downstreamErrorHandler = downstreamErrorHandler;
     }
 
     @GetMapping
-    public String listar(Model model) {
+    public String listar(Model model, HttpServletRequest request, RedirectAttributes redirectAttributes) {
         try {
             List<Autor> autores = autorClient.get().uri("/api/autores")
                     .retrieve().body(new ParameterizedTypeReference<>() {});
             model.addAttribute("autores", autores != null ? autores : List.of());
+        } catch (RestClientResponseException e) {
+            Optional<String> redirecionamento = downstreamErrorHandler.tratar(e, request, redirectAttributes);
+            if (redirecionamento.isPresent()) return redirecionamento.get();
+            model.addAttribute("erro", "Serviço de autores temporariamente indisponível.");
+            model.addAttribute("autores", List.of());
         } catch (Exception e) {
             model.addAttribute("erro", "Serviço de autores temporariamente indisponível.");
             model.addAttribute("autores", List.of());
@@ -48,13 +59,16 @@ public class AutorController {
     }
 
     @GetMapping("/{id}/editar")
-    public String editar(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
+    public String editar(@PathVariable Long id, Model model, HttpServletRequest request,
+                         RedirectAttributes redirectAttributes) {
         try {
             Autor autor = autorClient.get().uri("/api/autores/" + id)
                     .retrieve().body(Autor.class);
             model.addAttribute("autor", autor);
             return "autores/formulario";
         } catch (RestClientResponseException e) {
+            Optional<String> redirecionamento = downstreamErrorHandler.tratar(e, request, redirectAttributes);
+            if (redirecionamento.isPresent()) return redirecionamento.get();
             redirectAttributes.addFlashAttribute("erro", "Autor não encontrado.");
             return "redirect:/autores";
         }
@@ -62,7 +76,7 @@ public class AutorController {
 
     @PostMapping
     public String criar(@Valid @ModelAttribute("autor") Autor autor, BindingResult result,
-                        Model model, RedirectAttributes redirectAttributes) {
+                        Model model, HttpServletRequest request, RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
             return "autores/formulario";
         }
@@ -72,6 +86,8 @@ public class AutorController {
             redirectAttributes.addFlashAttribute("mensagem", "Autor cadastrado com sucesso!");
             return "redirect:/autores";
         } catch (RestClientResponseException e) {
+            Optional<String> redirecionamento = downstreamErrorHandler.tratar(e, request, redirectAttributes);
+            if (redirecionamento.isPresent()) return redirecionamento.get();
             model.addAttribute("erro", extractErro(e.getResponseBodyAsString()));
             return "autores/formulario";
         }
@@ -80,7 +96,7 @@ public class AutorController {
     @PostMapping("/{id}")
     public String atualizar(@PathVariable Long id,
                             @Valid @ModelAttribute("autor") Autor autor, BindingResult result,
-                            Model model, RedirectAttributes redirectAttributes) {
+                            Model model, HttpServletRequest request, RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
             return "autores/formulario";
         }
@@ -90,6 +106,8 @@ public class AutorController {
             redirectAttributes.addFlashAttribute("mensagem", "Autor atualizado com sucesso!");
             return "redirect:/autores";
         } catch (RestClientResponseException e) {
+            Optional<String> redirecionamento = downstreamErrorHandler.tratar(e, request, redirectAttributes);
+            if (redirecionamento.isPresent()) return redirecionamento.get();
             if (e.getStatusCode().value() == 404) {
                 redirectAttributes.addFlashAttribute("erro", "Autor não encontrado.");
                 return "redirect:/autores";
@@ -100,12 +118,14 @@ public class AutorController {
     }
 
     @PostMapping("/{id}/excluir")
-    public String excluir(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+    public String excluir(@PathVariable Long id, HttpServletRequest request, RedirectAttributes redirectAttributes) {
         try {
             autorClient.delete().uri("/api/autores/" + id)
                     .retrieve().toBodilessEntity();
             redirectAttributes.addFlashAttribute("mensagem", "Autor excluído com sucesso!");
         } catch (RestClientResponseException e) {
+            Optional<String> redirecionamento = downstreamErrorHandler.tratar(e, request, redirectAttributes);
+            if (redirecionamento.isPresent()) return redirecionamento.get();
             redirectAttributes.addFlashAttribute("erro", "Autor não encontrado ou não pôde ser excluído.");
         }
         return "redirect:/autores";

@@ -1,0 +1,11 @@
+/home/jonatha-targino/Personal/spring-library/livro-ms/src/main/java/com/library/livrooms/LivroMsApplication.java
+/home/jonatha-targino/Personal/spring-library/livro-ms/src/main/java/com/library/livrooms/controller/LivroController.java
+/home/jonatha-targino/Personal/spring-library/livro-ms/src/main/java/com/library/livrooms/exception/GlobalExceptionHandler.java
+/home/jonatha-targino/Personal/spring-library/livro-ms/src/main/java/com/library/livrooms/model/Livro.java
+/home/jonatha-targino/Personal/spring-library/livro-ms/src/main/java/com/library/livrooms/repository/LivroRepository.java
+/home/jonatha-targino/Personal/spring-library/livro-ms/src/main/java/com/library/livrooms/security/JwtAuthenticationFilter.java
+/home/jonatha-targino/Personal/spring-library/livro-ms/src/main/java/com/library/livrooms/security/JwtService.java
+/home/jonatha-targino/Personal/spring-library/livro-ms/src/main/java/com/library/livrooms/security/RestAccessDeniedHandler.java
+/home/jonatha-targino/Personal/spring-library/livro-ms/src/main/java/com/library/livrooms/security/RestAuthenticationEntryPoint.java
+/home/jonatha-targino/Personal/spring-library/livro-ms/src/main/java/com/library/livrooms/security/SecurityConfig.java
+/home/jonatha-targino/Personal/spring-library/livro-ms/src/main/java/com/library/livrooms/service/LivroService.java

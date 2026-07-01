@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="pt-BR">
 <head th:replace="~{fragments/layout :: head('Autores')}"></head>
 <body>
 
@@ -8,7 +9,7 @@
 <main class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h1 class="h3">Autores</h1>
-        <a th:href="@{/autores/novo}" class="btn btn-primary">+ Novo Autor</a>
+        <a th:href="@{/autores/novo}" class="btn btn-primary" sec:authorize="hasRole('BIBLIOTECARIO')">+ Novo Autor</a>
     </div>
 
     <div th:if="${mensagem}" class="alert alert-success alert-dismissible fade show" role="alert">
@@ -39,13 +40,14 @@
                 <td th:text="${autor.nome}"></td>
                 <td th:text="${autor.nacionalidade}"></td>
                 <td th:text="${autor.anoNascimento}"></td>
-                <td>
+                <td sec:authorize="hasRole('BIBLIOTECARIO')">
                     <a th:href="@{/autores/{id}/editar(id=${autor.id})}"
                        class="btn btn-sm btn-outline-secondary me-1">Editar</a>
                     <form th:action="@{/autores/{id}/excluir(id=${autor.id})}"
                           method="post" class="d-inline">
                         <button type="submit" class="btn btn-sm btn-outline-danger"
-                                th:onclick="|return confirm('Confirmar exclusão de ${autor.nome}?')|">
+                                th:data-nome="${autor.nome}"
+                                onclick="return confirm('Confirmar exclusão de ' + this.dataset.nome + '?')">
                             Excluir
                         </button>
                     </form>

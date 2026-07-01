@@ -19,6 +19,11 @@ services:
     environment:
       LIVRO_MS_URL: http://livro-ms:8081
       AUTOR_MS_URL: http://autor-ms:8082
+      JWT_SECRET: ${JWT_SECRET:-troque-este-segredo-compartilhado-em-producao-0123456789}
+      BIBLIOTECARIO_USER: ${BIBLIOTECARIO_USER:-bibliotecario}
+      BIBLIOTECARIO_PASS: ${BIBLIOTECARIO_PASS:-biblioteca123}
+      USUARIO_USER: ${USUARIO_USER:-usuario}
+      USUARIO_PASS: ${USUARIO_PASS:-usuario123}
     depends_on:
       - livro-ms
       - autor-ms
@@ -31,6 +36,7 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-livros:5432/db_livros
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres
+      JWT_SECRET: ${JWT_SECRET:-troque-este-segredo-compartilhado-em-producao-0123456789}
     depends_on:
       postgres-livros:
         condition: service_healthy
@@ -43,6 +49,7 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-autores:5432/db_autores
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres
+      JWT_SECRET: ${JWT_SECRET:-troque-este-segredo-compartilhado-em-producao-0123456789}
     depends_on:
       postgres-autores:
         condition: service_healthy

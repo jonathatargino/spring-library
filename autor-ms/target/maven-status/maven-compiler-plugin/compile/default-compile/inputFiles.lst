@@ -1,0 +1,11 @@
+/home/jonatha-targino/Personal/spring-library/autor-ms/src/main/java/com/library/autorms/AutorMsApplication.java
+/home/jonatha-targino/Personal/spring-library/autor-ms/src/main/java/com/library/autorms/controller/AutorController.java
+/home/jonatha-targino/Personal/spring-library/autor-ms/src/main/java/com/library/autorms/exception/GlobalExceptionHandler.java
+/home/jonatha-targino/Personal/spring-library/autor-ms/src/main/java/com/library/autorms/model/Autor.java
+/home/jonatha-targino/Personal/spring-library/autor-ms/src/main/java/com/library/autorms/repository/AutorRepository.java
+/home/jonatha-targino/Personal/spring-library/autor-ms/src/main/java/com/library/autorms/security/JwtAuthenticationFilter.java
+/home/jonatha-targino/Personal/spring-library/autor-ms/src/main/java/com/library/autorms/security/JwtService.java
+/home/jonatha-targino/Personal/spring-library/autor-ms/src/main/java/com/library/autorms/security/RestAccessDeniedHandler.java
+/home/jonatha-targino/Personal/spring-library/autor-ms/src/main/java/com/library/autorms/security/RestAuthenticationEntryPoint.java
+/home/jonatha-targino/Personal/spring-library/autor-ms/src/main/java/com/library/autorms/security/SecurityConfig.java
+/home/jonatha-targino/Personal/spring-library/autor-ms/src/main/java/com/library/autorms/service/AutorService.java
